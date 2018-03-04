@@ -55,7 +55,8 @@ public:
       sha1_implementation_(0),
       sha256_implementation_(0),
       sha512_implementation_(0),
-      hash_algorithm_(hash_algorithm_none) {
+      hash_algorithm_(hash_algorithm_none),
+      block_size_(64*1024) {
     }
     virtual ~main() {
     }
@@ -76,6 +77,7 @@ protected:
     typedef crypto::hash::implementation::sha1 sha1_t;
     typedef crypto::hash::implementation::sha256 sha256_t;
     typedef crypto::hash::implementation::sha512 sha512_t;
+    typedef io::read::file source_file_t;
 
 protected:
     ///////////////////////////////////////////////////////////////////////
@@ -117,6 +119,97 @@ protected:
     ///////////////////////////////////////////////////////////////////////
     virtual int hash_source(hash_t& hash, const string_t& source) {
         int err = 1;
+        err = this->hash_file(hash, source);
+        return err;
+    }
+    ///////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////
+    virtual int hash_file(hash_t& hash, const string_t& source) {
+        int err = 1;
+        const char_t* chars = 0;
+        size_t length = 0;
+        
+        if ((chars = source.has_chars(length))) {
+            source_file_t source_file;
+
+            LOG_DEBUG("source_file.open(chars = \"" << chars << "\", source_file.mode_read_binary())...");
+            if ((source_file.open(chars, source_file.mode_read_binary()))) {
+                LOG_DEBUG("...source_file.open(chars = \"" << chars << "\", source_file.mode_read_binary())");
+
+                err = this->hash_file(hash, source_file);
+
+                LOG_DEBUG("source_file.close() \"" << chars << "\"...");
+                if ((source_file.close())) {
+                    LOG_DEBUG("...source_file.close() \"" << chars << "\"");
+                } else {
+                    LOG_ERROR("...failed on source_file.close() \"" << chars << "\"");
+                }
+            } else {
+                LOG_ERROR("...failed on source_file.open(chars = \"" << chars << "\", source_file.mode_read_binary())");
+            }
+        }
+        return err;
+    }
+    ///////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////
+    virtual int hash_file(hash_t& hash, source_file_t& source) {
+        int err = 1;
+        ssize_t blocksize = 0;
+
+        if ((0 < (blocksize = this->block_size()))) {
+
+            if ((blocksize <= (this->block().set_length(blocksize)))) {
+                byte_t *block = 0;
+                
+                if ((block = this->block().elements())) {
+                    
+                    err = this->hash_file(hash, block, blocksize, source);
+                }
+            }
+        }
+        return err;
+    }
+    ///////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////
+    virtual int hash_file
+    (hash_t& hash, byte_t* block, size_t blocksize, source_file_t& source) {
+        int err = 1;
+        ssize_t hashsize = 0;
+        size_t blockcount = 0;
+        time_t t1 = 0, t2 = 0, t = 1;
+
+        if ((0 < (hashsize = hash.hashsize())) && (0 <= (hash.initialize()))) {
+            err = 0;
+
+            ::time(&t1);
+            for (ssize_t count = 0, amount = 0; 0 <= amount; count += amount, ++blockcount) {
+
+                if (0 < (amount = source.read(block, blocksize))) {
+                    if (amount != (hash.hash(block, amount))) {
+                        err = 1;
+                    } else {
+                        ::time(&t2);
+                        if ((t2 - t1) >= t) {
+                            t1 = t2;
+                            LOG_DEBUG("..." << (blockcount+1) << " blocks read");
+                        }
+                        continue;
+                    }
+                } else {
+                    if (0 > (amount)) {
+                        err = 1;
+                    }
+                }
+                if (!(err)) {
+                    if (hashsize == (count = hash.finalize(block, blocksize))) {
+                        this->output_hash(block, count);
+                    } else {
+                        err = 1;
+                    }
+                }
+                break;
+            }
+        }
         return err;
     }
 
@@ -395,11 +488,15 @@ protected:
     virtual byte_array_t& block() const {
         return (byte_array_t&)this->block_;
     }
+    virtual size_t block_size() const {
+        return this->block_size_;
+    }
 
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
 protected:
     hash_algorithm_t hash_algorithm_;
+    size_t block_size_;
     md5_t md5_;
     sha1_t sha1_;
     sha256_t sha256_;

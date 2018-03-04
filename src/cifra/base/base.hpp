@@ -29,6 +29,7 @@
 #include "xos/base/array.hpp"
 #include "xos/base/string.hpp"
 #include "xos/base/to_string.hpp"
+#include "xos/io/read/file.hpp"
 
 namespace cifra {
 
@@ -69,6 +70,14 @@ typedef xos::base::pointer_to_string pointer_to_string;
 typedef xos::base::bool_to_string bool_to_string;
 typedef xos::base::char_to_string char_to_string;
 typedef xos::base::x_to_string x_to_string;
+
+namespace io {
+namespace read {
+
+typedef xos::io::read::file file;
+
+} // namespace read
+} // namespace io 
 
 } // namespace cifra 
 
