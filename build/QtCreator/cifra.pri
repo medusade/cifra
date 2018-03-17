@@ -22,36 +22,21 @@
 ########################################################################
 
 ########################################################################
-# rostra
-#
-# pkg-config --cflags --libs rostra
-#
-build_rostra_INCLUDEPATH += \
-
-build_rostra_DEFINES += \
-
-build_rostra_LIBS += \
-
-########################################################################
-# nadir
-#
-# pkg-config --cflags --libs nadir
-#
-build_nadir_INCLUDEPATH += \
-
-build_nadir_DEFINES += \
-
-build_nadir_LIBS += \
-
-########################################################################
 # bn
 #
 # pkg-config --cflags --libs bn
 #
+
+# build bn INCLUDEPATH
+#
 build_bn_INCLUDEPATH += \
 
+# build bn DEFINES
+#
 build_bn_DEFINES += \
 
+# build bn LIBS
+#
 build_bn_LIBS += \
 
 ########################################################################
@@ -59,35 +44,101 @@ build_bn_LIBS += \
 #
 # pkg-config --cflags --libs mp
 #
+
+# build mp INCLUDEPATH
+#
 build_mp_INCLUDEPATH += \
 
+# build mp DEFINES
+#
 build_mp_DEFINES += \
 
+# build mp LIBS
+#
 build_mp_LIBS += \
 
 ########################################################################
-# mpinteger
+# rostra
 #
-# pkg-config --cflags --libs mpinteger
+# pkg-config --cflags --libs rostra
 #
-build_mpinteger_INCLUDEPATH += \
 
-build_mpinteger_DEFINES += \
+# build rostra INCLUDEPATH
+#
+build_rostra_INCLUDEPATH += \
 
-build_mpinteger_LIBS += \
+# build rostra DEFINES
+#
+build_rostra_DEFINES += \
+
+# build rostra LIBS
+#
+build_rostra_LIBS += \
+
+########################################################################
+# nadir
+#
+# pkg-config --cflags --libs nadir
+#
+
+# build nadir INCLUDEPATH
+#
+build_nadir_INCLUDEPATH += \
+
+# build nadir DEFINES
+#
+build_nadir_DEFINES += \
+
+# build nadir LIBS
+#
+build_nadir_LIBS += \
+
+########################################################################
+# numera
+#
+# pkg-config --cflags --libs numera
+#
+
+# build numera INCLUDEPATH
+#
+build_numera_INCLUDEPATH += \
+
+# build numera DEFINES
+#
+build_numera_DEFINES += \
+
+# build numera LIBS
+#
+build_numera_LIBS += \
 
 ########################################################################
 # cifra
+
+# build cifra INCLUDEPATH
+#
 build_cifra_INCLUDEPATH += \
+$${build_numera_INCLUDEPATH} \
 $${build_nadir_INCLUDEPATH} \
 $${build_rostra_INCLUDEPATH} \
+$${build_mp_INCLUDEPATH} \
+$${build_bn_INCLUDEPATH} \
 
 
+# build cifra DEFINES
+#
 build_cifra_DEFINES += \
+$${build_bn_DEFINES} \
+$${build_mp_DEFINES} \
 $${build_rostra_DEFINES} \
 $${build_nadir_DEFINES} \
+$${build_numera_DEFINES} \
 
 
+# build cifra LIBS
+#
 build_cifra_LIBS += \
+$${build_numera_LIBS} \
 $${build_nadir_LIBS} \
 $${build_rostra_LIBS} \
+$${build_mp_LIBS} \
+$${build_bn_LIBS} \
