@@ -18,9 +18,9 @@
 /// Author: $author$
 ///   Date: 3/5/2018
 ///////////////////////////////////////////////////////////////////////
-#include "gnu/app/console/mp/main_main.hpp"
+#include "gmp/app/console/mp/main_main.hpp"
 
-namespace gnu {
+namespace gmp {
 namespace app {
 namespace console {
 namespace mp {
@@ -28,7 +28,7 @@ namespace mp {
 } // namespace mp 
 } // namespace console 
 } // namespace app 
-} // namespace gnu 
+} // namespace gmp 
 
 ///////////////////////////////////////////////////////////////////////
 /// Function: main

@@ -23,7 +23,7 @@
 
 #include "mpz_msb.h"
 
-namespace gnu {
+namespace gmp {
 namespace app {
 namespace console {
 namespace mp {
@@ -31,6 +31,6 @@ namespace mp {
 } // namespace mp 
 } // namespace console 
 } // namespace app 
-} // namespace gnu 
+} // namespace gmp 
 
 #endif // _GNU_APP_CONSOLE_MP_MAIN_MAIN_HPP 
