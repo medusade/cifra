@@ -58,6 +58,24 @@ build_mp_DEFINES += \
 build_mp_LIBS += \
 
 ########################################################################
+# mb
+#
+# pkg-config --cflags --libs mb
+#
+
+# build mb INCLUDEPATH
+#
+build_mb_INCLUDEPATH += \
+
+# build mb DEFINES
+#
+build_mb_DEFINES += \
+
+# build mb LIBS
+#
+build_mb_LIBS += \
+
+########################################################################
 # rostra
 #
 # pkg-config --cflags --libs rostra
@@ -120,6 +138,7 @@ build_cifra_INCLUDEPATH += \
 $${build_numera_INCLUDEPATH} \
 $${build_nadir_INCLUDEPATH} \
 $${build_rostra_INCLUDEPATH} \
+$${build_mb_INCLUDEPATH} \
 $${build_mp_INCLUDEPATH} \
 $${build_bn_INCLUDEPATH} \
 
@@ -129,6 +148,7 @@ $${build_bn_INCLUDEPATH} \
 build_cifra_DEFINES += \
 $${build_bn_DEFINES} \
 $${build_mp_DEFINES} \
+$${build_mb_DEFINES} \
 $${build_rostra_DEFINES} \
 $${build_nadir_DEFINES} \
 $${build_numera_DEFINES} \
@@ -140,5 +160,6 @@ build_cifra_LIBS += \
 $${build_numera_LIBS} \
 $${build_nadir_LIBS} \
 $${build_rostra_LIBS} \
+$${build_mb_LIBS} \
 $${build_mp_LIBS} \
 $${build_bn_LIBS} \
