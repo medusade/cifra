@@ -67,6 +67,10 @@ $${CIFRA_SRC}/cifra/crypto/rsa/mp/key.hpp \
 $${CIFRA_SRC}/cifra/crypto/rsa/mp/public_key.hpp \
 $${CIFRA_SRC}/cifra/crypto/rsa/mp/private_key.hpp \
 \
+$${CIFRA_SRC}/cifra/crypto/rsa/mb/key.hpp \
+$${CIFRA_SRC}/cifra/crypto/rsa/mb/public_key.hpp \
+$${CIFRA_SRC}/cifra/crypto/rsa/mb/private_key.hpp \
+\
 $${CIFRA_SRC}/cifra/console/main.hpp \
 $${CIFRA_SRC}/cifra/console/mp/main_opt.hpp \
 $${CIFRA_SRC}/cifra/console/mp/main.hpp \
@@ -80,9 +84,9 @@ $${CIFRA_SRC}/cifra/app/console/rsa/main.hpp \
 rsa_SOURCES += \
 $${CIFRA_SRC}/cifra/base/base.cpp \
 \
-$${CIFRA_SRC}/cifra/crypto/rsa/bn/key.cpp \
-$${CIFRA_SRC}/cifra/crypto/rsa/bn/public_key.cpp \
-$${CIFRA_SRC}/cifra/crypto/rsa/bn/private_key.cpp \
+$${CIFRA_SRC}/cifra/crypto/rsa/mb/key.cpp \
+$${CIFRA_SRC}/cifra/crypto/rsa/mb/public_key.cpp \
+$${CIFRA_SRC}/cifra/crypto/rsa/mb/private_key.cpp \
 \
 $${CIFRA_SRC}/cifra/console/main_main.cpp \
 $${CIFRA_SRC}/cifra/console/mp/main_opt.cpp \

@@ -82,6 +82,29 @@ mp_LIBS += \
 -l$${MP_NAME}z \
 
 ########################################################################
+# mb
+MB_THIRDPARTY_PKG_MAKE_BLD = $${MB_THIRDPARTY_PKG}/build/$${CIFRA_OS}/$${BUILD_CONFIG}
+MB_THIRDPARTY_PRJ_MAKE_BLD = $${MB_THIRDPARTY_PRJ}/build/$${CIFRA_OS}/$${BUILD_CONFIG}
+MB_THIRDPARTY_PKG_BLD = $${MB_THIRDPARTY_PKG}/build/$${CIFRA_OS}/QtCreator/$${BUILD_CONFIG}
+MB_THIRDPARTY_PRJ_BLD = $${MB_THIRDPARTY_PRJ}/build/$${CIFRA_OS}/QtCreator/$${BUILD_CONFIG}
+MB_PKG_BLD = $${OTHER_BLD}/$${MB_PKG}/build/$${CIFRA_OS}/QtCreator/$${BUILD_CONFIG}
+MB_PRJ_BLD = $${OTHER_BLD}/$${MB_PRJ}/build/$${CIFRA_OS}/QtCreator/$${BUILD_CONFIG}
+#MB_LIB = $${MB_THIRDPARTY_PKG_MAKE_BLD}/lib
+#MB_LIB = $${MB_THIRDPARTY_PRJ_MAKE_BLD}/lib
+#MB_LIB = $${MB_THIRDPARTY_PKG_BLD}/lib
+MB_LIB = $${MB_THIRDPARTY_PRJ_BLD}/lib
+#MB_LIB = $${MB_PKG_BLD}/lib
+#MB_LIB = $${MB_PRJ_BLD}/lib
+#MB_LIB = $${CIFRA_LIB}
+
+# mb LIBS
+#
+mb_LIBS += \
+-L$${MB_LIB}/lib$${MB_LIB_NAME} \
+-L$${MB_LIB} \
+-l$${MB_LIB_NAME} \
+
+########################################################################
 # rostra
 ROSTRA_THIRDPARTY_PKG_BLD = $${ROSTRA_THIRDPARTY_PKG}/build/$${CIFRA_OS}/QtCreator/$${BUILD_CONFIG}
 ROSTRA_THIRDPARTY_PRJ_BLD = $${ROSTRA_THIRDPARTY_PRJ}/build/$${CIFRA_OS}/QtCreator/$${BUILD_CONFIG}
@@ -152,6 +175,7 @@ cifra_LIBS += \
 $${numera_LIBS} \
 $${nadir_LIBS} \
 $${rostra_LIBS} \
+$${mb_LIBS} \
 $${mp_LIBS} \
 $${bn_LIBS} \
 $${build_cifra_LIBS} \

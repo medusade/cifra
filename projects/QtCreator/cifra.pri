@@ -117,6 +117,46 @@ _NO_INLINES \
 NO_ASM \
 
 ########################################################################
+# mb
+MB_VERSION_MAJOR = 0
+MB_VERSION_MINOR = 0
+MB_VERSION_RELEASE = 0
+MB_VERSION = $${MB_VERSION_MAJOR}.$${MB_VERSION_MINOR}.$${MB_VERSION_RELEASE}
+MB_LIB_NAME = mbuint
+MB_NAME = generic
+MB_GROUP = etiris
+MB_DIR = $${MB_GROUP}/$${MB_NAME}-$${MB_VERSION}
+MB_PKG_DIR = $${MB_NAME}/cpp/xos
+MB_HOME_BUILD = $${HOME}/build/$${MB_NAME}
+MB_HOME_BUILD_INCLUDE = $${MB_HOME_BUILD}/include
+MB_HOME_BUILD_LIB = $${MB_HOME_BUILD}/lib
+MB_THIRDPARTY_PKG = $${THIRDPARTY_PKG}/$${MB_DIR}
+MB_THIRDPARTY_PRJ = $${THIRDPARTY_PRJ}/$${MB_DIR}
+MB_THIRDPARTY_SRC = $${THIRDPARTY_SRC}/$${MB_PKG_DIR}
+MB_THIRDPARTY_SRC_GROUP = $${MB_NAME}
+MB_THIRDPARTY_SRC_NAME = $${MB_NAME}
+MB_THIRDPARTY_SRC_DIR = $${THIRDPARTY_SRC}/$${MB_THIRDPARTY_SRC_GROUP}/$${MB_THIRDPARTY_SRC_NAME} 
+MB_PKG = $${OTHER_PKG}/$${MB_PKG_DIR}
+MB_PRJ = $${OTHER_PRJ}/$${MB_PKG_DIR}
+#MB_SRC = $${MB_THIRDPARTY_SRC_DIR}
+#MB_SRC = $${MB_THIRDPARTY_PKG}/src
+MB_SRC = $${MB_THIRDPARTY_PRJ}/src
+#MB_SRC = $${MB_PKG}/src
+#MB_SRC = $${MB_PRJ}/src
+
+# mb INCLUDEPATH
+#
+#mb_INCLUDEPATH += \
+#$${MB_HOME_BUILD_INCLUDE} \
+
+mb_INCLUDEPATH += \
+$${MB_SRC}/etiris/generic \
+
+# mb DEFINES
+#
+mb_DEFINES += \
+
+########################################################################
 # rostra
 ROSTRA_VERSION_MAJOR = 0
 ROSTRA_VERSION_MINOR = 0
@@ -263,6 +303,7 @@ $${CIFRA_SRC} \
 $${numera_INCLUDEPATH} \
 $${nadir_INCLUDEPATH} \
 $${rostra_INCLUDEPATH} \
+$${mb_INCLUDEPATH} \
 $${mp_INCLUDEPATH} \
 $${bn_INCLUDEPATH} \
 $${build_cifra_INCLUDEPATH} \
@@ -272,6 +313,7 @@ $${build_cifra_INCLUDEPATH} \
 cifra_DEFINES += \
 $${bn_DEFINES} \
 $${mp_DEFINES} \
+$${mb_DEFINES} \
 $${rostra_DEFINES} \
 $${nadir_DEFINES} \
 $${numera_DEFINES} \
