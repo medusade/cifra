@@ -13,23 +13,19 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: public_key.cpp
+///   File: private_key.cpp
 ///
 /// Author: $author$
-///   Date: 3/14/2018
+///   Date: 3/18/2018
 ///////////////////////////////////////////////////////////////////////
-#include "cifra/crypto/rsa/mp/public_key.hpp"
+#include "cifra/crypto/rsa/mb/private_key.hpp"
 
 namespace cifra {
 namespace crypto {
 namespace rsa {
-namespace mp {
+namespace mb {
 
-///////////////////////////////////////////////////////////////////////
-///  Class: public_keyt
-///////////////////////////////////////////////////////////////////////
-
-} // namespace mp 
+} // namespace mb 
 } // namespace rsa 
 } // namespace crypto 
 } // namespace cifra 

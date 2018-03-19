@@ -16,18 +16,18 @@
 ///   File: public_key.hpp
 ///
 /// Author: $author$
-///   Date: 3/14/2018
+///   Date: 3/18/2018
 ///////////////////////////////////////////////////////////////////////
-#ifndef _CIFRA_CRYPTO_RSA_MP_PUBLIC_KEY_HPP
-#define _CIFRA_CRYPTO_RSA_MP_PUBLIC_KEY_HPP
+#ifndef _CIFRA_CRYPTO_RSA_MB_PUBLIC_KEY_HPP
+#define _CIFRA_CRYPTO_RSA_MB_PUBLIC_KEY_HPP
 
 #include "cifra/crypto/rsa/public_key.hpp"
-#include "cifra/crypto/rsa/mp/key.hpp"
+#include "cifra/crypto/rsa/mb/key.hpp"
 
 namespace cifra {
 namespace crypto {
 namespace rsa {
-namespace mp {
+namespace mb {
 
 ///////////////////////////////////////////////////////////////////////
 ///  Class: public_key_implementt
@@ -119,19 +119,19 @@ public:
 
         if ((o = (byte_t*)out) && (outsize) 
             && (i = (const byte_t*)in) && (insize)) {
-            MP_INT *modulus = 0, *exponent = 0;
+            uint8 *modulus = 0, *exponent = 0;
             ssize_t modsize = 0, expsize = 0;
 
             if ((modulus = this->modulus()) && (modsize = this->modsize())
                 && (exponent = this->exponent()) && (expsize = this->expsize())
-                && (outsize >= modsize) && (insize == modsize)) {
-                ::numera::mp::mp::mpint out_, in_;
+                && (outsize >= modsize) && (insize <= modsize)) {
+                uint8 out_[MBU_MAX], in_[MBU_MAX];
                 
                 // out = in ^ x mod n
                 //
-                ::mpz_set_msb(in_, i, insize);
-                ::mpz_powm(out_, in_, exponent, modulus);
-                ::mpz_get_msb(o, modsize, out_);
+                ::mbu_x(in_, i, insize, modsize);
+                ::mbu_mod_exp(out_, in_, modulus, exponent, modsize, expsize);
+                ::mbu_get(o, out_, modsize);
                 return modsize;
             }
         }
@@ -139,30 +139,38 @@ public:
     }
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
-    virtual ssize_t set_exponent_msb(const byte_t* to, size_t tosize) {
-        MP_INT* exponent = 0;
+    virtual ssize_t set_exponent(const unsigned& to, size_t tosize = sizeof(unsigned)) {
+        uint8* exponent = 0;
         if ((exponent = this->exponent()) && (to) && (tosize)) {
-            LOG_DEBUG("::mpz_set_msb(exponent, to = " << x_to_string(to, tosize) << ", tosize = " << tosize << ")...");
-            ::mpz_set_msb(exponent, to, tosize);
+            LOG_DEBUG("::mbu_set_u(exponent, to = " << to << ", tosize = " << tosize << ")...");
+            ::mbu_set_u(exponent, to, tosize);
+            this->set_expsize(tosize);
+            return tosize;
+        }
+        return 0;
+    }
+    virtual ssize_t set_exponent_msb(const byte_t* to, size_t tosize) {
+        uint8* exponent = 0;
+        if ((exponent = this->exponent()) && (to) && (tosize) && (tosize <= MBU_MAX)) {
+            LOG_DEBUG("::mbu_set(exponent, to = " << x_to_string(to, tosize) << ", tosize = " << tosize << ")...");
+            ::mbu_set(exponent, to, tosize);
             this->set_expsize(tosize);
             return tosize;
         }
         return 0;
     }
     virtual ssize_t get_exponent_msb(byte_t* to, size_t tosize) const {
-        MP_INT* exponent = 0;
+        uint8* exponent = 0;
         size_t size = 0;
-        if ((exponent = this->exponent()) && (size = this->expsize()) && (to) && (tosize <= size)) {
-            ::mpz_get_msb(to, size, exponent);
-            LOG_DEBUG("...::mpz_get_msb(to = " << x_to_string(to, size) << ", size = " << size << ", exponent)");
+        if ((exponent = this->exponent()) && (size = this->expsize()) && (to) && (tosize >= size)) {
+            ::mbu_get(exponent, to, size);
+            LOG_DEBUG("...::mbu_get(exponent, to = " << x_to_string(to, size) << ", size = " << size << ")");
             return size;
         }
         return 0;
     }
-    ///////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////
-    virtual MP_INT* exponent () const {
-        return (MP_INT*) exponent_;
+    virtual uint8* exponent() const {
+        return (uint8*)exponent_;
     }
 protected:
     ///////////////////////////////////////////////////////////////////////
@@ -174,13 +182,13 @@ protected:
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
 protected:
-    ::numera::mp::mp::mpint exponent_;
+    uint8 exponent_[MBU_MAX];
 };
 typedef public_keyt<> public_key;
 
-} // namespace mp 
+} // namespace mb 
 } // namespace rsa 
 } // namespace crypto 
 } // namespace cifra 
 
-#endif // _CIFRA_CRYPTO_RSA_MP_PUBLIC_KEY_HPP 
+#endif // _CIFRA_CRYPTO_RSA_MB_PUBLIC_KEY_HPP 

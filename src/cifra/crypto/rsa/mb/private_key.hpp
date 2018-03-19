@@ -16,18 +16,18 @@
 ///   File: private_key.hpp
 ///
 /// Author: $author$
-///   Date: 3/14/2018
+///   Date: 3/18/2018
 ///////////////////////////////////////////////////////////////////////
-#ifndef _CIFRA_CRYPTO_RSA_MP_PRIVATE_KEY_HPP
-#define _CIFRA_CRYPTO_RSA_MP_PRIVATE_KEY_HPP
+#ifndef _CIFRA_CRYPTO_RSA_MB_PRIVATE_KEY_HPP
+#define _CIFRA_CRYPTO_RSA_MB_PRIVATE_KEY_HPP
 
 #include "cifra/crypto/rsa/private_key.hpp"
-#include "cifra/crypto/rsa/mp/key.hpp"
+#include "cifra/crypto/rsa/mb/key.hpp"
 
 namespace cifra {
 namespace crypto {
 namespace rsa {
-namespace mp {
+namespace mb {
 
 ///////////////////////////////////////////////////////////////////////
 ///  Class: private_key_implementt
@@ -107,81 +107,56 @@ public:
 
         if ((o = (byte_t*)out) && (outsize) 
             && (i = (const byte_t*)in) && (insize)) {
-            MP_INT *modulus = 0, *p = 0, *q = 0, *dmp1 = 0, *dmq1 = 0, *iqmp = 0;
+            uint8 *modulus = 0, *p = 0, *q = 0, *dmp1 = 0, *dmq1 = 0, *iqmp = 0;
             ssize_t modsize = 0, psize = 0;
 
             if ((modulus = this->modulus()) && (modsize = this->modsize())
                 && (p = this->p()) && (psize = this->psize())
                 && (q = this->q()) && (dmp1 = this->dmp1())
                 && (dmq1 = this->dmq1()) && (iqmp = this->iqmp()) 
-                && (outsize >= modsize) && (insize == modsize)) {
-                bool subtracted_p = false;
-                ::numera::mp::mp::mpint out, in, q2, p2, k;
+                && (outsize >= modsize) && (insize <= modsize)) {
+                uint8 out[MBU_MAX], in[MBU_MAX], p1[MBU_MAX], p2[MBU_MAX], q2[MBU_MAX];
+                mbu_montgomery mont;
                 
                 // out = in ^ d mod n 
                 //
-                LOG_DEBUG("::mpz_set_msb(in, i, insize)...");
-                ::mpz_set_msb(in, i, insize);
+                LOG_DEBUG("::mbu_x(in, i, insize, modsize)...");
+                ::mbu_x(in, i, insize, modsize);
 
                 // q2 = (in mod q) ^ dmq1 mod q
                 //
-                LOG_DEBUG("::mpz_mod(out, in, q)...");
-                ::mpz_mod(out, in, q);
-
-                LOG_DEBUG("::mpz_powm(q2, out, dmq1, q)...");
-                ::mpz_powm(q2, out, dmq1, q);
-
+                ::mbu_x(q2, q, psize, modsize);
+                ::mbu_mod(out, in, q2, modsize);
+                ::mbu_init_montgomery(&mont, q, psize);
+                ::mbu_mod_exp_montgomery(q2+psize, out+psize, &mont, dmq1, psize);
+                
                 // p2 = (in mod p) ^ dmp1 mod p
                 //
-                LOG_DEBUG("::mpz_mod(out, in, p)...");
-                ::mpz_mod(out, in, p);
-
-                LOG_DEBUG("::mpz_powm(p2, out, dmp1, p)...");
-                ::mpz_powm(p2, out, dmp1, p);
-
-                // if q2 > p then q2 = q2 - p
+                ::mbu_x(p1, p, psize, modsize);
+                ::mbu_mod(out, in, p1, modsize);
+                ::mbu_init_montgomery(&mont, p, psize);
+                ::mbu_mod_exp_montgomery(p2+psize, out+psize, &mont, dmp1, psize);
+                
+                // p2 = ((p2 - q2) mod p) * iqmp mod p
                 //
-                if ((subtracted_p = (0 < ::mpz_cmp(q2, p)))) {
-                    LOG_DEBUG("::mpz_sub(out, q2, p)...");
-                    ::mpz_sub(out, q2, p);
-
-                    LOG_DEBUG("::mpz_set(p2, out)...");
-                    ::mpz_set(p2, out);
+                if (::mbu_cmp(p2+psize, q2+psize, psize) < 0) {
+                    ::mbu_sub(out, q2+psize, p2+psize, psize);
+                    ::mbu_mul_x(p2, out, iqmp, psize);
+                    ::mbu_mod(out, p2, p1, modsize);
+                    ::mbu_sub(p2, p, out+psize, psize);
+                } else {
+                    ::mbu_sub(out, p2+psize, q2+psize, psize);
+                    ::mbu_mul_x(in, out, iqmp, psize);
+                    ::mbu_mod(out, in, p1, modsize);
+                    ::mbu_set(p2, out+psize, psize);
                 }
-
-                // k = (((p2 + p) - q2) mod p) * iqmp mod p.
+                // out = q2 + q * p2
                 //
-                LOG_DEBUG("::mpz_add(out, p2, p)...");
-                ::mpz_add(out, p2, p);
-
-                LOG_DEBUG("::mpz_sub(k, out, q2)...");
-                ::mpz_sub(k, out, q2);
-
-                LOG_DEBUG(":BN_mul(out, k, iqmp)...");
-                ::mpz_mul(out, k, iqmp);
-
-                LOG_DEBUG("::mpz_mmod(k, out, p)...");
-                ::mpz_mmod(k, out, p);
-
-                // out = q2 + q * k.
-                //
-                LOG_DEBUG("::mpz_mul(p2, k, q)...");
-                ::mpz_mul(p2, k, q);
-
-                LOG_DEBUG("::mpz_add(out, p2, q2)...");
-                ::mpz_add(out, p2, q2);
-
-                // if subtracted p then out = out + p
-                //
-                if (subtracted_p) {
-                    LOG_DEBUG("::mpz_add(p2, out, p)...");
-                    ::mpz_add(p2, out, p);
-
-                    LOG_DEBUG("::mpz_set(out, p2)...");
-                    ::mpz_set(out, p2);
-                }
-                LOG_DEBUG("::mpz_get_msb(o, modsize, out)...");
-                ::mpz_get_msb(o, modsize, out);
+                ::mbu_mul_x(in, q, p2, psize);
+                ::mbu_add(out, in, q2, modsize);
+                
+                LOG_DEBUG("::mbu_get(o, out, modsize)...");
+                ::mbu_get(o, out, modsize);
                 return modsize;
             }
         }
@@ -190,21 +165,21 @@ public:
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
     virtual ssize_t set_d_msb(const byte_t* to, size_t tosize) {
-        MP_INT* d = 0;
-        if ((d = this->d()) && (to) && (tosize)) {
-            LOG_DEBUG("::mpz_set_msb(d, to = " << x_to_string(to, tosize) << ", tosize = " << tosize << ")...");
-            ::mpz_set_msb(d, to, tosize);
+        uint8* d = 0;
+        if ((d = this->d()) && (to) && (tosize) && (tosize <= MBU_MAX)) {
+            LOG_DEBUG("::mbu_set(d, to = " << x_to_string(to, tosize) << ", tosize = " << tosize << ")...");
+            ::mbu_set(d, to, tosize);
             this->set_dsize(tosize);
             return tosize;
         }
         return 0;
     }
     virtual ssize_t get_d_msb(byte_t* to, size_t tosize) const {
-        MP_INT* d = 0;
+        uint8* d = 0;
         size_t size = 0;
-        if ((d = this->d()) && (size = this->dsize()) && (to) && (tosize <= size)) {
-            ::mpz_get_msb(to, size, d);
-            LOG_DEBUG("...::mpz_get_msb(to = " << x_to_string(to, size) << ", size = " << size << ", d)");
+        if ((d = this->d()) && (size = this->dsize()) && (to) && (tosize >= size)) {
+            ::mbu_get(d, to, size);
+            LOG_DEBUG("...::mbu_get(d, to = " << x_to_string(to, size) << ", size = " << size << ")");
             return size;
         }
         return 0;
@@ -212,21 +187,21 @@ public:
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
     virtual ssize_t set_p_msb(const byte_t* to, size_t tosize) {
-        MP_INT* p = 0;
-        if ((p = this->p()) && (to) && (tosize)) {
-            LOG_DEBUG("::mpz_set_msb(p, to = " << x_to_string(to, tosize) << ", tosize = " << tosize << ")...");
-            ::mpz_set_msb(p, to, tosize);
+        uint8* p = 0;
+        if ((p = this->p()) && (to) && (tosize) && (tosize <= MBU_MAX)) {
+            LOG_DEBUG("::mbu_set(p, to = " << x_to_string(to, tosize) << ", tosize = " << tosize << ")...");
+            ::mbu_set(p, to, tosize);
             this->set_psize(tosize);
             return tosize;
         }
         return 0;
     }
     virtual ssize_t get_p_msb(byte_t* to, size_t tosize) const {
-        MP_INT* p = 0;
+        uint8* p = 0;
         size_t size = 0;
-        if ((p = this->p()) && (size = this->psize()) && (to) && (tosize <= size)) {
-            ::mpz_get_msb(to, size, p);
-            LOG_DEBUG("...::mpz_get_msb(to = " << x_to_string(to, size) << ", size = " << size << ", p)");
+        if ((p = this->p()) && (size = this->psize()) && (to) && (tosize >= size)) {
+            ::mbu_get(p, to, size);
+            LOG_DEBUG("...::mbu_get(p, to = " << x_to_string(to, size) << ", size = " << size << ")");
             return size;
         }
         return 0;
@@ -234,21 +209,20 @@ public:
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
     virtual ssize_t set_q_msb(const byte_t* to, size_t tosize) {
-        MP_INT* q = 0;
-        if ((q = this->q()) && (to) && (tosize)) {
-            LOG_DEBUG("::mpz_set_msb(q, to = " << x_to_string(to, tosize) << ", tosize = " << tosize << ")...");
-            ::mpz_set_msb(q, to, tosize);
-            //this->set_qsize(tosize);
+        uint8* q = 0;
+        if ((q = this->q()) && (to) && (tosize) && (tosize <= MBU_MAX)) {
+            LOG_DEBUG("::mbu_set(q, to = " << x_to_string(to, tosize) << ", tosize = " << tosize << ")...");
+            ::mbu_set(q, to, tosize);
             return tosize;
         }
         return 0;
     }
     virtual ssize_t get_q_msb(byte_t* to, size_t tosize) const {
-        MP_INT* q = 0;
+        uint8* q = 0;
         size_t size = 0;
-        if ((q = this->q()) && (size = this->psize()) && (to) && (tosize <= size)) {
-            ::mpz_get_msb(to, size, q);
-            LOG_DEBUG("...::mpz_get_msb(to = " << x_to_string(to, size) << ", size = " << size << ", q)");
+        if ((q = this->q()) && (size = this->psize()) && (to) && (tosize >= size)) {
+            ::mbu_get(q, to, size);
+            LOG_DEBUG("...::mbu_get(q, to = " << x_to_string(to, size) << ", size = " << size << ")");
             return size;
         }
         return 0;
@@ -256,21 +230,20 @@ public:
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
     virtual ssize_t set_dmp1_msb(const byte_t* to, size_t tosize) {
-        MP_INT* dmp1 = 0;
-        if ((dmp1 = this->dmp1()) && (to) && (tosize)) {
-            LOG_DEBUG("::mpz_set_msb(dmp1, to = " << x_to_string(to, tosize) << ", tosize = " << tosize << ")...");
-            ::mpz_set_msb(dmp1, to, tosize);
-            //this->set_dmp1size(tosize);
+        uint8* dmp1 = 0;
+        if ((dmp1 = this->dmp1()) && (to) && (tosize) && (tosize <= MBU_MAX)) {
+            LOG_DEBUG("::mbu_set(dmp1, to = " << x_to_string(to, tosize) << ", tosize = " << tosize << ")...");
+            ::mbu_set(dmp1, to, tosize);
             return tosize;
         }
         return 0;
     }
     virtual ssize_t get_dmp1_msb(byte_t* to, size_t tosize) const {
-        MP_INT* dmp1 = 0;
+        uint8* dmp1 = 0;
         size_t size = 0;
-        if ((dmp1 = this->dmp1()) && (size = this->psize()) && (to) && (tosize <= size)) {
-            ::mpz_get_msb(to, size, dmp1);
-            LOG_DEBUG("...::mpz_get_msb(to = " << x_to_string(to, size) << ", size = " << size << ", dmp1)");
+        if ((dmp1 = this->dmp1()) && (size = this->psize()) && (to) && (tosize >= size)) {
+            ::mbu_get(dmp1, to, size);
+            LOG_DEBUG("...::mbu_get(dmp1, to = " << x_to_string(to, size) << ", size = " << size << ")");
             return size;
         }
         return 0;
@@ -278,21 +251,20 @@ public:
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
     virtual ssize_t set_dmq1_msb(const byte_t* to, size_t tosize) {
-        MP_INT* dmq1 = 0;
-        if ((dmq1 = this->dmq1()) && (to) && (tosize)) {
-            LOG_DEBUG("::mpz_set_msb(dmq1, to = " << x_to_string(to, tosize) << ", tosize = " << tosize << ")...");
-            ::mpz_set_msb(dmq1, to, tosize);
-            //this->set_dmq1size(tosize);
+        uint8* dmq1 = 0;
+        if ((dmq1 = this->dmq1()) && (to) && (tosize) && (tosize <= MBU_MAX)) {
+            LOG_DEBUG("::mbu_set(dmq1, to = " << x_to_string(to, tosize) << ", tosize = " << tosize << ")...");
+            ::mbu_set(dmq1, to, tosize);
             return tosize;
         }
         return 0;
     }
     virtual ssize_t get_dmq1_msb(byte_t* to, size_t tosize) const {
-        MP_INT* dmq1 = 0;
+        uint8* dmq1 = 0;
         size_t size = 0;
-        if ((dmq1 = this->dmq1()) && (size = this->psize()) && (to) && (tosize <= size)) {
-            ::mpz_get_msb(to, size, dmq1);
-            LOG_DEBUG("...::mpz_get_msb(to = " << x_to_string(to, size) << ", size = " << size << ", dmq1)");
+        if ((dmq1 = this->dmq1()) && (size = this->psize()) && (to) && (tosize >= size)) {
+            ::mbu_get(dmq1, to, size);
+            LOG_DEBUG("...::mbu_get(dmq1, to = " << x_to_string(to, size) << ", size = " << size << ")");
             return size;
         }
         return 0;
@@ -300,44 +272,43 @@ public:
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
     virtual ssize_t set_iqmp_msb(const byte_t* to, size_t tosize) {
-        MP_INT* iqmp = 0;
-        if ((iqmp = this->iqmp()) && (to) && (tosize)) {
-            LOG_DEBUG("::mpz_set_msb(iqmp, to = " << x_to_string(to, tosize) << ", tosize = " << tosize << ")...");
-            ::mpz_set_msb(iqmp, to, tosize);
-            //this->set_iqmpsize(tosize);
+        uint8* iqmp = 0;
+        if ((iqmp = this->iqmp()) && (to) && (tosize) && (tosize <= MBU_MAX)) {
+            LOG_DEBUG("::mbu_set(iqmp, to = " << x_to_string(to, tosize) << ", tosize = " << tosize << ")...");
+            ::mbu_set(iqmp, to, tosize);
             return tosize;
         }
         return 0;
     }
     virtual ssize_t get_iqmp_msb(byte_t* to, size_t tosize) const {
-        MP_INT* iqmp = 0;
+        uint8* iqmp = 0;
         size_t size = 0;
-        if ((iqmp = this->iqmp()) && (size = this->psize()) && (to) && (tosize <= size)) {
-            ::mpz_get_msb(to, size, iqmp);
-            LOG_DEBUG("...::mpz_get_msb(to = " << x_to_string(to, size) << ", size = " << size << ", iqmp)");
+        if ((iqmp = this->iqmp()) && (size = this->psize()) && (to) && (tosize >= size)) {
+            ::mbu_get(iqmp, to, size);
+            LOG_DEBUG("...::mbu_get(iqmp, to = " << x_to_string(to, size) << ", size = " << size << ")");
             return size;
         }
         return 0;
     }
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
-    virtual MP_INT* d () const {
-        return (MP_INT*) d_;
+    virtual uint8* d () const {
+        return (uint8*) d_;
     }
-    virtual MP_INT* p () const {
-        return (MP_INT*) p_;
+    virtual uint8* p () const {
+        return (uint8*) p_;
     }
-    virtual MP_INT* q () const {
-        return (MP_INT*) q_;
+    virtual uint8* q () const {
+        return (uint8*) q_;
     }
-    virtual MP_INT* dmp1 () const {
-        return (MP_INT*) dmp1_;
+    virtual uint8* dmp1 () const {
+        return (uint8*) dmp1_;
     }
-    virtual MP_INT* dmq1 () const {
-        return (MP_INT*) dmq1_;
+    virtual uint8* dmq1 () const {
+        return (uint8*) dmq1_;
     }
-    virtual MP_INT* iqmp () const {
-        return (MP_INT*) iqmp_;
+    virtual uint8* iqmp () const {
+        return (uint8*) iqmp_;
     }
 protected:
     ///////////////////////////////////////////////////////////////////////
@@ -349,16 +320,14 @@ protected:
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
 protected:
-    ::numera::mp::mp::mpint d_, p_, q_, dmp1_, dmq1_, iqmp_;
+    uint8 d_[MBU_MAX], p_[MBU_MAX], q_[MBU_MAX], 
+          dmp1_[MBU_MAX], dmq1_[MBU_MAX], iqmp_[MBU_MAX];
 };
 typedef private_keyt<> private_key;
 
-} // namespace mp 
+} // namespace mb 
 } // namespace rsa 
 } // namespace crypto 
 } // namespace cifra 
 
-#endif // _CIFRA_CRYPTO_RSA_MP_PRIVATE_KEY_HPP 
-
-        
-
+#endif // _CIFRA_CRYPTO_RSA_MB_PRIVATE_KEY_HPP 

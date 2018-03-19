@@ -16,18 +16,18 @@
 ///   File: key.hpp
 ///
 /// Author: $author$
-///   Date: 3/14/2018
+///   Date: 3/18/2018
 ///////////////////////////////////////////////////////////////////////
-#ifndef _CIFRA_CRYPTO_RSA_MP_KEY_HPP
-#define _CIFRA_CRYPTO_RSA_MP_KEY_HPP
+#ifndef _CIFRA_CRYPTO_RSA_MB_KEY_HPP
+#define _CIFRA_CRYPTO_RSA_MB_KEY_HPP
 
 #include "cifra/crypto/rsa/key.hpp"
-#include "numera/mp/mp/mpint.hpp"
+#include "mbuint.h"
 
 namespace cifra {
 namespace crypto {
 namespace rsa {
-namespace mp {
+namespace mb {
 
 ///////////////////////////////////////////////////////////////////////
 ///  Class: key_implementt
@@ -67,27 +67,27 @@ public:
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
     virtual ssize_t set_modulus_msb(const byte_t* to, size_t tosize) {
-        MP_INT* modulus = 0;
-        if ((modulus = this->modulus()) && (to) && (tosize)) {
-            LOG_DEBUG("::mpz_set_msb(modulus, to = " << x_to_string(to, tosize) << ", tosize = " << tosize << ")...");
-            ::mpz_set_msb(modulus, to, tosize);
+        uint8* modulus = 0;
+        if ((modulus = this->modulus()) && (to) && (tosize) && (tosize <= MBU_MAX)) {
+            LOG_DEBUG("::mbu_set(modulus, to = " << x_to_string(to, tosize) << ", tosize = " << tosize << ")...");
+            ::mbu_set(modulus, to, tosize);
             this->set_modsize(tosize);
             return tosize;
         }
         return 0;
     }
     virtual ssize_t get_modulus_msb(byte_t* to, size_t tosize) const {
-        MP_INT* modulus = 0;
+        uint8* modulus = 0;
         size_t size = 0;
-        if ((modulus = this->modulus()) && (size = this->modsize()) && (to) && (tosize <= size)) {
-            ::mpz_get_msb(to, size, modulus);
-            LOG_DEBUG("...::mpz_get_msb(to = " << x_to_string(to, size) << ", size = " << size << ", modulus)");
+        if ((modulus = this->modulus()) && (size = this->modsize()) && (to) && (tosize >= size)) {
+            ::mbu_get(modulus, to, size);
+            LOG_DEBUG("...::mbu_get(modulus, to = " << x_to_string(to, size) << ", size = " << size << ")");
             return size;
         }
         return 0;
     }
-    virtual MP_INT* modulus() const {
-        return (MP_INT*)modulus_;
+    virtual uint8* modulus() const {
+        return (uint8*)modulus_;
     }
 protected:
     ///////////////////////////////////////////////////////////////////////
@@ -99,13 +99,13 @@ protected:
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
 protected:
-    ::numera::mp::mp::mpint modulus_;
+    uint8 modulus_[MBU_MAX];
 };
 typedef keyt<> key;
 
-} // namespace mp 
+} // namespace mb 
 } // namespace rsa 
 } // namespace crypto 
 } // namespace cifra 
 
-#endif // _CIFRA_CRYPTO_RSA_MP_KEY_HPP 
+#endif // _CIFRA_CRYPTO_RSA_MB_KEY_HPP 
