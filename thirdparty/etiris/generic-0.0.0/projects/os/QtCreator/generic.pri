@@ -13,58 +13,45 @@
 # or otherwise) arising in any way out of the use of this software,
 # even if advised of the possibility of such damage.
 #
-#   File: Makefile
+#   File: generic.pri
 #
 # Author: $author$
-#   Date: 3/7/2018
+#   Date: 3/18/2018
 #
-# generic Gcc Makefile for mp
+# Os QtCreator .pri file for generic
 ########################################################################
+UNAME = $$system(uname)
 
-OTHER_VERSION_PKG = ${PKG}
-OTHER_DEPENDS_PKG = ${PKG}/..
+contains(UNAME,Darwin) {
+GENERIC_OS = macosx
+} else {
+GENERIC_OS = linux
+}
 
-MP_PKG = ${PKG}
-MP_SRC = ${MP_PKG}/src/gmp/mp
-MP_BLD = ${MP_PKG}/${BLD}/${BUILD_TYPE}
-MP_LIB = ${MP_BLD}/lib
-MP_BIN = ${MP_BLD}/bin
-
-
-########################################################################
-# mp
-
-# mp USRDEFINES
-#
-mp_USRDEFINES += \
--D_NO_INLINES \
--DNO_ASM \
-${build_mp_USRDEFINES} \
-
-# mp USRINCLUDES
-#
-mp_USRINCLUDES += \
--I${MP_SRC} \
--I${MP_SRC}/mpn \
--I${MP_SRC}/mpz \
-${build_mp_USRINCLUDES} \
-
-# mp USRCXXFLAGS
-#
-mp_USRCXXFLAGS += \
-${build_mp_USRCXXFLAGS} \
-
-# mp USRLIBDIRS
-#
-mp_USRLIBDIRS += \
--L${MP_LIB} \
-${build_mp_USRLIBDIRS} \
-
-# mp LIBS
-#
-mp_LIBS += \
--lmp \
-${build_mp_LIBS} \
+#CONFIG += c++11
+#CONFIG += c++0x
 
 ########################################################################
+# generic
+
+# generic INCLUDEPATH
+#
+generic_INCLUDEPATH += \
+
+# generic DEFINES
+#
+generic_DEFINES += \
+
+# generic LIBS
+#
+generic_LIBS += \
+$${build_generic_LIBS} \
+-lpthread \
+-ldl \
+
+contains(GENERIC_OS,linux) {
+generic_LIBS += \
+-lrt
+} else {
+}
 

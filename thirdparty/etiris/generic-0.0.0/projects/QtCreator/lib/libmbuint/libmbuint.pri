@@ -13,62 +13,56 @@
 # or otherwise) arising in any way out of the use of this software,
 # even if advised of the possibility of such damage.
 #
-#   File: mp.pri
+#   File: libmbuint.pri
 #
 # Author: $author$
-#   Date: 3/5/2018
+#   Date: 3/18/2018
 #
-# QtCreator .pri file for mp executable mp
+# QtCreator .pri file for generic library libmbuint
 ########################################################################
 
 ########################################################################
-# mp
+# libmbuint
 
-# mp_exe TARGET
+# libmbuint TARGET
 #
-mp_exe_TARGET = mp
+libmbuint_TARGET = mbuint
+libmbuint_TEMPLATE = lib
+libmbuint_CONFIG += staticlib
 
-# mp_exe INCLUDEPATH
+# libmbuint INCLUDEPATH
 #
-mp_exe_INCLUDEPATH += \
-$${mp_INCLUDEPATH} \
+libmbuint_INCLUDEPATH += \
+$${generic_INCLUDEPATH} \
 
-# mp_exe DEFINES
+# libmbuint DEFINES
 #
-mp_exe_DEFINES += \
-$${mp_DEFINES} \
-
-########################################################################
-# mp_exe OBJECTIVE_HEADERS
-#
-#mp_exe_OBJECTIVE_HEADERS += \
-#$${MP_SRC}/mp/base/Base.hh \
-
-# mp_exe OBJECTIVE_SOURCES
-#
-#mp_exe_OBJECTIVE_SOURCES += \
-#$${MP_SRC}/mp/base/Base.mm \
+libmbuint_DEFINES += \
+$${generic_DEFINES} \
 
 ########################################################################
-# mp_exe HEADERS
+# libmbuint OBJECTIVE_HEADERS
 #
-mp_exe_HEADERS += \
-$${MP_SRC}/../../gmp/app/console/mp/main_main.hpp \
+#libmbuint_OBJECTIVE_HEADERS += \
+#$${GENERIC_SRC}/generic/base/Base.hh \
 
-# mp_exe SOURCES
+# libmbuint OBJECTIVE_SOURCES
 #
-mp_exe_SOURCES += \
-$${MP_SRC}/../../gmp/app/console/mp/main_main.cpp \
+#libmbuint_OBJECTIVE_SOURCES += \
+#$${GENERIC_SRC}/generic/base/Base.mm \
 
 ########################################################################
-# mp_exe FRAMEWORKS
+# libmbuint HEADERS
 #
-mp_exe_FRAMEWORKS += \
-$${mp_FRAMEWORKS} \
+libmbuint_HEADERS += \
+$${GENERIC_SRC}/etiris/generic/mbuint.h \
 
-# mp_exe LIBS
+# libmbuint SOURCES
 #
-mp_exe_LIBS += \
-$${mp_LIBS} \
+libmbuint_SOURCES += \
+$${GENERIC_SRC}/etiris/generic/mbuint.c \
+
+########################################################################
+
 
 

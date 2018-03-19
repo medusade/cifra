@@ -13,58 +13,29 @@
 # or otherwise) arising in any way out of the use of this software,
 # even if advised of the possibility of such damage.
 #
-#   File: Makefile
+#   File: generic.pri
 #
 # Author: $author$
-#   Date: 3/7/2018
+#   Date: 3/18/2018
 #
-# generic Gcc Makefile for mp
+# build QtCreator .pri file for generic
 ########################################################################
 
-OTHER_VERSION_PKG = ${PKG}
-OTHER_DEPENDS_PKG = ${PKG}/..
-
-MP_PKG = ${PKG}
-MP_SRC = ${MP_PKG}/src/gmp/mp
-MP_BLD = ${MP_PKG}/${BLD}/${BUILD_TYPE}
-MP_LIB = ${MP_BLD}/lib
-MP_BIN = ${MP_BLD}/bin
-
-
 ########################################################################
-# mp
+# generic
 
-# mp USRDEFINES
+# build generic INCLUDEPATH
 #
-mp_USRDEFINES += \
--D_NO_INLINES \
--DNO_ASM \
-${build_mp_USRDEFINES} \
+build_generic_INCLUDEPATH += \
 
-# mp USRINCLUDES
+
+# build generic DEFINES
 #
-mp_USRINCLUDES += \
--I${MP_SRC} \
--I${MP_SRC}/mpn \
--I${MP_SRC}/mpz \
-${build_mp_USRINCLUDES} \
+build_generic_DEFINES += \
 
-# mp USRCXXFLAGS
+
+# build generic LIBS
 #
-mp_USRCXXFLAGS += \
-${build_mp_USRCXXFLAGS} \
+build_generic_LIBS += \
 
-# mp USRLIBDIRS
-#
-mp_USRLIBDIRS += \
--L${MP_LIB} \
-${build_mp_USRLIBDIRS} \
-
-# mp LIBS
-#
-mp_LIBS += \
--lmp \
-${build_mp_LIBS} \
-
-########################################################################
 

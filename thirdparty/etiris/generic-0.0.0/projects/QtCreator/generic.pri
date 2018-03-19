@@ -13,12 +13,12 @@
 # or otherwise) arising in any way out of the use of this software,
 # even if advised of the possibility of such damage.
 #
-#   File: mp.pri
+#   File: generic.pri
 #
 # Author: $author$
-#   Date: 3/5/2018
+#   Date: 3/18/2018
 #
-# QtCreator .pri file for mp
+# QtCreator .pri file for generic
 ########################################################################
 
 OTHER_PKG = ../../../../../../..
@@ -31,49 +31,41 @@ THIRDPARTY_PRJ = $${OTHER_PRJ}/$${THIRDPARTY_NAME}
 THIRDPARTY_SRC = $${OTHER_PRJ}/src/$${THIRDPARTY_NAME}
 
 ########################################################################
-# mp
-FRAMEWORK_NAME = mp
+# generic
+FRAMEWORK_NAME = generic
 
-MP_PKG = ../../../../..
-MP_BLD = ../..
+GENERIC_PKG = ../../../../..
+GENERIC_BLD = ../..
 
-MP_PRJ = $${MP_PKG}
-MP_BIN = $${MP_BLD}/bin
-MP_LIB = $${MP_BLD}/lib
-MP_SRC = $${MP_PKG}/src/gmp/mp
+GENERIC_PRJ = $${GENERIC_PKG}
+GENERIC_BIN = $${GENERIC_BLD}/bin
+GENERIC_LIB = $${GENERIC_BLD}/lib
+GENERIC_SRC = $${GENERIC_PKG}/src
 
-# mp BUILD_CONFIG
+# generic BUILD_CONFIG
 #
 CONFIG(debug, debug|release) {
 BUILD_CONFIG = Debug
-mp_DEFINES += DEBUG_BUILD
+generic_DEFINES += DEBUG_BUILD
 } else {
 BUILD_CONFIG = Release
-mp_DEFINES += RELEASE_BUILD
+generic_DEFINES += RELEASE_BUILD
 }
 
-# mp INCLUDEPATH
+# generic INCLUDEPATH
 #
-mp_INCLUDEPATH += \
-$${MP_SRC} \
-$${MP_SRC}/mpn \
-$${MP_SRC}/mpz \
-$${MP_SRC}/../.. \
-$${build_mp_INCLUDEPATH} \
+generic_INCLUDEPATH += \
+$${GENERIC_SRC} \
+$${GENERIC_SRC}/etiris \
+$${build_generic_INCLUDEPATH} \
 
-# mp DEFINES
+# generic DEFINES
 #
-mp_DEFINES += \
-_NO_INLINES \
-NO_ASM \
-$${build_mp_DEFINES} \
+generic_DEFINES += \
+$${build_generic_DEFINES} \
 
-# mp LIBS
+# generic LIBS
 #
-mp_LIBS += \
--L$${MP_LIB}/lib$${FRAMEWORK_NAME} \
+generic_LIBS += \
+-L$${GENERIC_LIB}/lib$${FRAMEWORK_NAME} \
 -l$${FRAMEWORK_NAME} \
--L$${MP_LIB}/lib$${FRAMEWORK_NAME}n \
--l$${FRAMEWORK_NAME}n \
--L$${MP_LIB}/lib$${FRAMEWORK_NAME}z \
--l$${FRAMEWORK_NAME}z \
