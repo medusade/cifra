@@ -1,28 +1,27 @@
 ///////////////////////////////////////////////////////////////////////
-/// Copyright (c) 1988-2018 $organization$
+/// Copyright (c) 1988-2019 $organization$
 ///
-/// This software is provided by the author and contributors ``as is'' 
-/// and any express or implied warranties, including, but not limited to, 
-/// the implied warranties of merchantability and fitness for a particular 
-/// purpose are disclaimed. In no event shall the author or contributors 
-/// be liable for any direct, indirect, incidental, special, exemplary, 
-/// or consequential damages (including, but not limited to, procurement 
-/// of substitute goods or services; loss of use, data, or profits; or 
-/// business interruption) however caused and on any theory of liability, 
-/// whether in contract, strict liability, or tort (including negligence 
-/// or otherwise) arising in any way out of the use of this software, 
+/// This software is provided by the author and contributors ``as is''
+/// and any express or implied warranties, including, but not limited to,
+/// the implied warranties of merchantability and fitness for a particular
+/// purpose are disclaimed. In no event shall the author or contributors
+/// be liable for any direct, indirect, incidental, special, exemplary,
+/// or consequential damages (including, but not limited to, procurement
+/// of substitute goods or services; loss of use, data, or profits; or
+/// business interruption) however caused and on any theory of liability,
+/// whether in contract, strict liability, or tort (including negligence
+/// or otherwise) arising in any way out of the use of this software,
 /// even if advised of the possibility of such damage.
 ///
 ///   File: main.hpp
 ///
 /// Author: $author$
-///   Date: 3/2/2018
+///   Date: 3/17/2019
 ///////////////////////////////////////////////////////////////////////
-#ifndef _CIFRA_APP_CONSOLE_HASH_MAIN_HPP
-#define _CIFRA_APP_CONSOLE_HASH_MAIN_HPP
+#ifndef _CIFRA_APP_CONSOLE_CIFRA_MAIN_HPP
+#define _CIFRA_APP_CONSOLE_CIFRA_MAIN_HPP
 
-#include "cifra/app/console/hash/main_opt.hpp"
-#include "cifra/console/lib/cifra/version/main.hpp"
+#include "cifra/app/console/cifra/main_opt.hpp"
 #include "cifra/crypto/hash/openssl/hashes.hpp"
 
 namespace cifra {
@@ -36,10 +35,10 @@ namespace implementation = openssl;
 namespace cifra {
 namespace app {
 namespace console {
-namespace hash {
+namespace cifra {
 
-typedef ::cifra::console::lib::cifra::version::maint<main_opt_implements, main_opt> main_extends;
-typedef main_extends::Implements main_implements;
+typedef ::cifra::app::console::cifra::main_opt::Implements main_implements;
+typedef ::cifra::app::console::cifra::main_opt main_extends;
 ///////////////////////////////////////////////////////////////////////
 ///  Class: main
 ///////////////////////////////////////////////////////////////////////
@@ -64,8 +63,13 @@ public:
     }
     virtual ~main() {
     }
+private:
+    main(const main& copy) {
+    }
 
 protected:
+    ///////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////
     enum hash_algorithm_t {
         hash_algorithm_none,
         hash_algorithm_sha512,
@@ -270,10 +274,19 @@ protected:
         if ((this->hash_finalize_)) {
             err = (this->*hash_finalize_)(hash, hashsize, block, blocksize);
         } else {
-            err = this->simple_hash_finalize(hash, hashsize, block, blocksize);            
+            err = this->default_hash_finalize(hash, hashsize, block, blocksize);            
         }
         return err;
     }
+    virtual int default_hash_finalize
+    (hash_t& hash, ssize_t hashsize, byte_t* block, size_t blocksize) {
+        int err = 0;
+        err = this->simple_hash_finalize(hash, hashsize, block, blocksize);        
+        return err;
+    }
+
+    ///////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////
     virtual int simple_hash_finalize
     (hash_t& hash, ssize_t hashsize, byte_t* block, size_t blocksize) {
         int err = 1;
@@ -281,6 +294,7 @@ protected:
         if (0 < (hashsize)) {
             ssize_t count = 0;
 
+            LOG_DEBUG("hash.finalize(block = " << x_to_string(block, hashsize) << "..., blocksize = " << blocksize << ")...");
             if (hashsize == (count = hash.finalize(block, blocksize))) {
                 LOG_DEBUG("..." << count << " = hash.finalize(block = " << x_to_string(block, hashsize) << ", hashsize = " << hashsize << ")");
                 this->output_hash(block, count);
@@ -296,11 +310,13 @@ protected:
         if (0 < (hashsize)) {
             ssize_t count = 0;
 
+            LOG_DEBUG("hash.finalize(block = " << x_to_string(block, hashsize) << "..., blocksize = " << blocksize << ")...");
             if (hashsize == (count = hash.finalize(block, blocksize))) {
                 LOG_DEBUG("..." << count << " = hash.finalize(block = " << x_to_string(block, hashsize) << ", hashsize = " << hashsize << ")");
 
                 if ((0 <= (hash.initialize()))) {
 
+                    LOG_DEBUG("hash.hash(block = \"" << x_to_string(block, count) << "\", count = " << count << ")...");
                     if (count == (hash.hash(block, count))) {
     
                         if (hashsize == (count = hash.finalize(block, hashsize))) {
@@ -331,34 +347,41 @@ protected:
         if ((this->hash_)) {
             return (this->*hash_)();
         } else {
-            return this->sha1();
+            return this->default_hash();
         }
+    }
+    virtual hash_t& default_hash() {
+        return this->sha1();
     }
 
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
     hash_t& (Derives::*md5_implementation_)();
     virtual hash_t& md5() {
-        if ((this->md5_implementation_)) 
+        if ((this->md5_implementation_)) {
             return (this->*md5_implementation_)();
+        }
         return this->md5_;
     }
     hash_t& (Derives::*sha1_implementation_)();
     virtual hash_t& sha1() {
-        if ((this->sha1_implementation_)) 
+        if ((this->sha1_implementation_)) {
             return (this->*sha1_implementation_)();
+        }
         return this->sha1_;
     }
     hash_t& (Derives::*sha256_implementation_)();
     virtual hash_t& sha256() {
-        if ((this->sha256_implementation_)) 
+        if ((this->sha256_implementation_)) {
             return (this->*sha256_implementation_)();
+        }
         return this->sha256_;
     }
     hash_t& (Derives::*sha512_implementation_)();
     virtual hash_t& sha512() {
-        if ((this->sha512_implementation_)) 
+        if ((this->sha512_implementation_)) {
             return (this->*sha512_implementation_)();
+        }
         return this->sha512_;
     }
 
@@ -403,7 +426,6 @@ protected:
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
     virtual const char_t* set_plain_text(const char_t* to) {
-        LOG_DEBUG("this->plain_text_.assign(to = \"" << to << "\")...");
         this->plain_text_.assign(to);
         return this->plain_text_.has_chars();
     }
@@ -428,23 +450,23 @@ protected:
      int argc, char**argv, char**env) {
         int err = 0;
         if ((optarg) && (optarg[0])) {
-            if ((!(optarg[1]) && (CIFRA_CONSOLE_HASH_MAIN_HASH_OPTARG_MD5_C[0] == (optarg[0])))
-                || !(chars_t::compare(optarg, CIFRA_CONSOLE_HASH_MAIN_HASH_OPTARG_MD5_S))) {
+            if ((!(optarg[1]) && (CIFRA_CONSOLE_CIFRA_MAIN_HASH_OPTARG_MD5_C[0] == (optarg[0])))
+                || !(chars_t::compare(optarg, CIFRA_CONSOLE_CIFRA_MAIN_HASH_OPTARG_MD5_S))) {
                 this->set_hash_algorithm(hash_algorithm_md5);
             } else {
-                if ((!(optarg[1]) && (CIFRA_CONSOLE_HASH_MAIN_HASH_OPTARG_SHA1_C[0] == (optarg[0])))
-                    || !(chars_t::compare(optarg, CIFRA_CONSOLE_HASH_MAIN_HASH_OPTARG_SHA1_S))) {
+                if ((!(optarg[1]) && (CIFRA_CONSOLE_CIFRA_MAIN_HASH_OPTARG_SHA1_C[0] == (optarg[0])))
+                    || !(chars_t::compare(optarg, CIFRA_CONSOLE_CIFRA_MAIN_HASH_OPTARG_SHA1_S))) {
                     this->set_hash_algorithm(hash_algorithm_sha1);
                 } else {
-                    if ((!(optarg[1]) && (CIFRA_CONSOLE_HASH_MAIN_HASH_OPTARG_SHA256_C[0] == (optarg[0])))
-                        || !(chars_t::compare(optarg, CIFRA_CONSOLE_HASH_MAIN_HASH_OPTARG_SHA256_S))) {
+                    if ((!(optarg[1]) && (CIFRA_CONSOLE_CIFRA_MAIN_HASH_OPTARG_SHA256_C[0] == (optarg[0])))
+                        || !(chars_t::compare(optarg, CIFRA_CONSOLE_CIFRA_MAIN_HASH_OPTARG_SHA256_S))) {
                         this->set_hash_algorithm(hash_algorithm_sha256);
                     } else {
-                        if ((!(optarg[1]) && (CIFRA_CONSOLE_HASH_MAIN_HASH_OPTARG_SHA512_C[0] == (optarg[0])))
-                            || !(chars_t::compare(optarg, CIFRA_CONSOLE_HASH_MAIN_HASH_OPTARG_SHA512_S))) {
+                        if ((!(optarg[1]) && (CIFRA_CONSOLE_CIFRA_MAIN_HASH_OPTARG_SHA512_C[0] == (optarg[0])))
+                            || !(chars_t::compare(optarg, CIFRA_CONSOLE_CIFRA_MAIN_HASH_OPTARG_SHA512_S))) {
                             this->set_hash_algorithm(hash_algorithm_sha512);
                         } else {
-                            err = this->on_invalid_option_arg
+                            err = on_invalid_option_arg
                             (optval, optarg, optname, optind, argc, argv, env);
                         }
                     }
@@ -460,7 +482,7 @@ protected:
         int err = 0;
         if (!(err = this->on_hash_option
               (optval, optarg, optname, optind, argc, argv, env))) {
-             this->set_merkel_hash();
+             set_merkel_hash();
         }
         return err;
     }
@@ -474,7 +496,7 @@ protected:
         }
         return err;
     }
-    
+
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
 protected:
@@ -486,11 +508,11 @@ protected:
     sha512_t sha512_;
     string_t plain_text_;
     byte_array_t block_;
-};
+}; /// class _EXPORT_CLASS main
 
-} // namespace hash 
-} // namespace console 
-} // namespace app 
-} // namespace cifra 
+} /// namespace cifra
+} /// namespace console
+} /// namespace app
+} /// namespace cifra
 
-#endif // _CIFRA_APP_CONSOLE_HASH_MAIN_HPP 
+#endif /// ndef _CIFRA_APP_CONSOLE_CIFRA_MAIN_HPP

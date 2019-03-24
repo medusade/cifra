@@ -116,44 +116,81 @@ public:
                 && (dmq1 = this->dmq1()) && (iqmp = this->iqmp()) 
                 && (outsize >= modsize) && (insize <= modsize)) {
                 uint8 out[MBU_MAX], in[MBU_MAX], p1[MBU_MAX], p2[MBU_MAX], q2[MBU_MAX];
+#ifdef ETIRIS_GENERIC_MBUINT_H
                 mbu_montgomery mont;
+#else // def ETIRIS_GENERIC_MBUINT_H
+#endif // def ETIRIS_GENERIC_MBUINT_H
                 
                 // out = in ^ d mod n 
                 //
                 LOG_DEBUG("::mbu_x(in, i, insize, modsize)...");
                 ::mbu_x(in, i, insize, modsize);
 
+#ifndef ETIRIS_GENERIC_MBUINT_H
+                LOG_DEBUG("::mbu_mod_exp_crt_montgomery(out, in, p, q, dmp1, dmq1, iqmp, psize)...");
+                ::mbu_mod_exp_crt_montgomery(out, in, p, q, dmp1, dmq1, iqmp, psize);
+#else // ndef ETIRIS_GENERIC_MBUINT_H
                 // q2 = (in mod q) ^ dmq1 mod q
                 //
+                LOG_DEBUG("::mbu_x(q2, q, psize, modsize)...");
                 ::mbu_x(q2, q, psize, modsize);
+                LOG_DEBUG(":mbu_mod(out, in, q2, modsize)...");
                 ::mbu_mod(out, in, q2, modsize);
+#ifdef ETIRIS_GENERIC_MBUINT_H
+                LOG_DEBUG("::mbu_init_montgomery(&mont, q, psize)...");
                 ::mbu_init_montgomery(&mont, q, psize);
+                LOG_DEBUG(":mbu_mod_exp_montgomery(q2+psize, out+psize, &mont, dmq1, psize)...");
                 ::mbu_mod_exp_montgomery(q2+psize, out+psize, &mont, dmq1, psize);
+#else // def ETIRIS_GENERIC_MBUINT_H
+                LOG_DEBUG(".::mbu_mod_exp_montgomery(q2+psize, out+psize, q, dmq1, psize, psize)..");
+                ::mbu_mod_exp_montgomery(q2+psize, out+psize, q, dmq1, psize, psize);
+#endif // def ETIRIS_GENERIC_MBUINT_H
                 
                 // p2 = (in mod p) ^ dmp1 mod p
                 //
+                LOG_DEBUG("::mbu_x(p1, p, psize, modsize)...");
                 ::mbu_x(p1, p, psize, modsize);
+                LOG_DEBUG("::mbu_mod(out, in, p1, modsize)...");
                 ::mbu_mod(out, in, p1, modsize);
+#ifdef ETIRIS_GENERIC_MBUINT_H
+                LOG_DEBUG("::mbu_init_montgomery(&mont, p, psize)...");
                 ::mbu_init_montgomery(&mont, p, psize);
+                LOG_DEBUG("::mbu_mod_exp_montgomery(p2+psize, out+psize, &mont, dmp1, psize)...");
                 ::mbu_mod_exp_montgomery(p2+psize, out+psize, &mont, dmp1, psize);
+#else // def ETIRIS_GENERIC_MBUINT_H
+                LOG_DEBUG("::mbu_mod_exp_montgomery(p2+psize, out+psize, p, dmp1, psize, psize)...");
+                ::mbu_mod_exp_montgomery(p2+psize, out+psize, p, dmp1, psize, psize);
+#endif // def ETIRIS_GENERIC_MBUINT_H
                 
                 // p2 = ((p2 - q2) mod p) * iqmp mod p
                 //
+                LOG_DEBUG("::mbu_cmp(p2+psize, q2+psize, psize)...");
                 if (::mbu_cmp(p2+psize, q2+psize, psize) < 0) {
+                    LOG_DEBUG(":mbu_sub(out, q2+psize, p2+psize, psize)...");
                     ::mbu_sub(out, q2+psize, p2+psize, psize);
+                    LOG_DEBUG("::mbu_mul_x(p2, out, iqmp, psize)...");
                     ::mbu_mul_x(p2, out, iqmp, psize);
+                    LOG_DEBUG("::mbu_mod(out, p2, p1, modsize)...");
                     ::mbu_mod(out, p2, p1, modsize);
+                    LOG_DEBUG("::mbu_sub(p2, p, out+psize, psize)...");
                     ::mbu_sub(p2, p, out+psize, psize);
                 } else {
+                    LOG_DEBUG("::mbu_sub(out, p2+psize, q2+psize, psize)...");
                     ::mbu_sub(out, p2+psize, q2+psize, psize);
+                    LOG_DEBUG(":mbu_mul_x(in, out, iqmp, psize)...");
                     ::mbu_mul_x(in, out, iqmp, psize);
+                    LOG_DEBUG("::mbu_mod(out, in, p1, modsize)...");
                     ::mbu_mod(out, in, p1, modsize);
+                    LOG_DEBUG(":mbu_set(p2, out+psize, psize)...");
                     ::mbu_set(p2, out+psize, psize);
                 }
                 // out = q2 + q * p2
                 //
+                LOG_DEBUG("::mbu_mul_x(in, q, p2, psize)...");
                 ::mbu_mul_x(in, q, p2, psize);
+                LOG_DEBUG("::mbu_add(out, in, q2, modsize)...");
                 ::mbu_add(out, in, q2, modsize);
+#endif // ndef ETIRIS_GENERIC_MBUINT_H
                 
                 LOG_DEBUG("::mbu_get(o, out, modsize)...");
                 ::mbu_get(o, out, modsize);

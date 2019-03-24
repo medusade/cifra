@@ -129,8 +129,11 @@ public:
                 
                 // out = in ^ x mod n
                 //
+                LOG_DEBUG("::mbu_x(in_, i, insize, modsize)...");
                 ::mbu_x(in_, i, insize, modsize);
+                LOG_DEBUG("::mbu_mod_exp(out_, in_, modulus, exponent, modsize, expsize)...");
                 ::mbu_mod_exp(out_, in_, modulus, exponent, modsize, expsize);
+                LOG_DEBUG("::mbu_get(o, out_, modsize)...");
                 ::mbu_get(o, out_, modsize);
                 return modsize;
             }

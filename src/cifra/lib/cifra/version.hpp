@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////
-/// Copyright (c) 1988-2018 $organization$
+/// Copyright (c) 1988-2019 $organization$
 ///
 /// This software is provided by the author and contributors ``as is'' 
 /// and any express or implied warranties, including, but not limited to, 
@@ -13,25 +13,30 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: main.cpp
+///   File: version.hpp
 ///
 /// Author: $author$
-///   Date: 3/2/2018
+///   Date: 3/12/2019
 ///////////////////////////////////////////////////////////////////////
-#include "cifra/app/console/hash/main.hpp"
-#include "cifra/console/main_main.cpp"
+#ifndef _CIFRA_LIB_CIFRA_VERSION_HPP
+#define _CIFRA_LIB_CIFRA_VERSION_HPP
+
+#include "cifra/lib/version.hpp"
 
 namespace cifra {
-namespace app {
-namespace console {
-namespace hash {
+namespace lib {
+namespace cifra {
 
 ///////////////////////////////////////////////////////////////////////
-///  Class: main
+///  Class: version
 ///////////////////////////////////////////////////////////////////////
-static main the_main;
+class _EXPORT_CLASS version {
+public:
+    static const lib::version& which();
+}; /// class _EXPORT_CLASS version
 
-} // namespace hash 
-} // namespace console 
-} // namespace app 
-} // namespace cifra 
+} /// namespace cifra
+} /// namespace lib
+} /// namespace cifra
+
+#endif /// _CIFRA_LIB_CIFRA_VERSION_HPP 

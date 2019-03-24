@@ -78,6 +78,7 @@ public:
 
         ::time(&t);
         ::srand(t);
+        //::srand(1521641298);
         //::srand(1521461722);
         //::srand(1984);
 

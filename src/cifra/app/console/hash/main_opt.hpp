@@ -144,30 +144,6 @@ public:
      const char* optname, int optind,
      int argc, char**argv, char**env) {
         int err = 0;
-        if ((optarg) && (optarg[0])) {
-            if ((!(optarg[1]) && (CIFRA_CONSOLE_HASH_MAIN_HASH_OPTARG_MD5_C[0] == (optarg[0])))
-                || !(chars_t::compare(optarg, CIFRA_CONSOLE_HASH_MAIN_HASH_OPTARG_MD5_S))) {
-                //set_hash_algorithm(hash_algorithm_md5);
-            } else {
-                if ((!(optarg[1]) && (CIFRA_CONSOLE_HASH_MAIN_HASH_OPTARG_SHA1_C[0] == (optarg[0])))
-                    || !(chars_t::compare(optarg, CIFRA_CONSOLE_HASH_MAIN_HASH_OPTARG_SHA1_S))) {
-                    //set_hash_algorithm(hash_algorithm_sha1);
-                } else {
-                    if ((!(optarg[1]) && (CIFRA_CONSOLE_HASH_MAIN_HASH_OPTARG_SHA256_C[0] == (optarg[0])))
-                        || !(chars_t::compare(optarg, CIFRA_CONSOLE_HASH_MAIN_HASH_OPTARG_SHA256_S))) {
-                        //set_hash_algorithm(hash_algorithm_sha256);
-                    } else {
-                        if ((!(optarg[1]) && (CIFRA_CONSOLE_HASH_MAIN_HASH_OPTARG_SHA512_C[0] == (optarg[0])))
-                            || !(chars_t::compare(optarg, CIFRA_CONSOLE_HASH_MAIN_HASH_OPTARG_SHA512_S))) {
-                            //set_hash_algorithm(hash_algorithm_sha512);
-                        } else {
-                            err = on_invalid_option_arg
-                            (optval, optarg, optname, optind, argc, argv, env);
-                        }
-                    }
-                }
-            }
-        }
         return err;
     }
     ///////////////////////////////////////////////////////////////////////
@@ -176,10 +152,6 @@ public:
      const char* optname, int optind,
      int argc, char**argv, char**env) {
         int err = 0;
-        if (!(err = this->on_hash_option
-              (optval, optarg, optname, optind, argc, argv, env))) {
-            // set_merkel_hash();
-        }
         return err;
     }
     ///////////////////////////////////////////////////////////////////////
@@ -188,9 +160,6 @@ public:
      const char* optname, int optind,
      int argc, char**argv, char**env) {
         int err = 0;
-        if ((optarg) && (optarg[0])) {
-            //set_plain_text(optarg);
-        }
         return err;
     }
 
