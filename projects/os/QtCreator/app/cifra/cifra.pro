@@ -1,5 +1,5 @@
 ########################################################################
-# Copyright (c) 1988-2018 $organization$
+# Copyright (c) 1988-2019 $organization$
 #
 # This software is provided by the author and contributors ``as is''
 # and any express or implied warranties, including, but not limited to,
@@ -16,7 +16,7 @@
 #   File: cifra.pro
 #
 # Author: $author$
-#   Date: 3/2/2018
+#   Date: 3/12/2019
 #
 # QtCreator .pro file for cifra executable cifra
 ########################################################################
@@ -28,21 +28,49 @@ include(../../../../QtCreator/app/cifra/cifra.pri)
 TARGET = $${cifra_exe_TARGET}
 
 ########################################################################
+# INCLUDEPATH
+#
 INCLUDEPATH += \
 $${cifra_exe_INCLUDEPATH} \
 
+# DEFINES
+# 
 DEFINES += \
 $${cifra_exe_DEFINES} \
 
 ########################################################################
+# OBJECTIVE_HEADERS
+#
+OBJECTIVE_HEADERS += \
+$${cifra_exe_OBJECTIVE_HEADERS} \
+
+# OBJECTIVE_SOURCES
+#
+OBJECTIVE_SOURCES += \
+$${cifra_exe_OBJECTIVE_SOURCES} \
+
+########################################################################
+# HEADERS
+#
 HEADERS += \
 $${cifra_exe_HEADERS} \
+$${OBJECTIVE_HEADERS} \
 
+# SOURCES
+#
 SOURCES += \
 $${cifra_exe_SOURCES} \
 
 ########################################################################
+# FRAMEWORKS
+#
+FRAMEWORKS += \
+$${cifra_exe_FRAMEWORKS} \
+
+# LIBS
+#
 LIBS += \
 $${cifra_exe_LIBS} \
+$${FRAMEWORKS} \
 
 

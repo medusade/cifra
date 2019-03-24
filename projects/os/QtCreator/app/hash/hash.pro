@@ -13,56 +13,64 @@
 # or otherwise) arising in any way out of the use of this software,
 # even if advised of the possibility of such damage.
 #
-#   File: libcifra.pro
+#   File: hash.pro
 #
 # Author: $author$
-#   Date: 3/12/2019
+#   Date: 3/14/2019
 #
-# QtCreator .pro file for cifra library libcifra
+# QtCreator .pro file for cifra executable hash
 ########################################################################
 include(../../../../../build/QtCreator/cifra.pri)
 include(../../../../QtCreator/cifra.pri)
 include(../../cifra.pri)
-include(../../../../QtCreator/lib/libcifra/libcifra.pri)
+include(../../../../QtCreator/app/hash/hash.pri)
 
-TARGET = $${libcifra_TARGET}
-TEMPLATE = $${libcifra_TEMPLATE}
-CONFIG += $${libcifra_CONFIG}
+TARGET = $${hash_TARGET}
 
 ########################################################################
 # INCLUDEPATH
 #
 INCLUDEPATH += \
-$${libcifra_INCLUDEPATH} \
+$${hash_INCLUDEPATH} \
 
 # DEFINES
 # 
 DEFINES += \
-$${libcifra_DEFINES} \
+$${hash_DEFINES} \
 
 ########################################################################
 # OBJECTIVE_HEADERS
 #
 OBJECTIVE_HEADERS += \
-$${libcifra_OBJECTIVE_HEADERS} \
+$${hash_OBJECTIVE_HEADERS} \
 
 # OBJECTIVE_SOURCES
 #
 OBJECTIVE_SOURCES += \
-$${libcifra_OBJECTIVE_SOURCES} \
+$${hash_OBJECTIVE_SOURCES} \
 
 ########################################################################
 # HEADERS
 #
 HEADERS += \
-$${libcifra_HEADERS} \
+$${hash_HEADERS} \
 $${OBJECTIVE_HEADERS} \
 
 # SOURCES
 #
 SOURCES += \
-$${libcifra_SOURCES} \
+$${hash_SOURCES} \
 
 ########################################################################
+# FRAMEWORKS
+#
+FRAMEWORKS += \
+$${hash_FRAMEWORKS} \
+
+# LIBS
+#
+LIBS += \
+$${hash_LIBS} \
+$${FRAMEWORKS} \
 
 

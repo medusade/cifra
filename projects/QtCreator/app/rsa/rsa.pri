@@ -1,5 +1,5 @@
 ########################################################################
-# Copyright (c) 1988-2018 $organization$
+# Copyright (c) 1988-2019 $organization$
 #
 # This software is provided by the author and contributors ``as is''
 # and any express or implied warranties, including, but not limited to,
@@ -16,7 +16,7 @@
 #   File: rsa.pri
 #
 # Author: $author$
-#   Date: 3/13/2018
+#   Date: 3/20/2019
 #
 # QtCreator .pri file for cifra executable rsa
 ########################################################################
@@ -32,11 +32,19 @@ rsa_TARGET = rsa
 #
 rsa_INCLUDEPATH += \
 $${cifra_INCLUDEPATH} \
+$${numera_INCLUDEPATH} \
+$${mbuint_INCLUDEPATH} \
+$${mp_INCLUDEPATH} \
+$${bn_INCLUDEPATH} \
 
 # rsa DEFINES
 #
 rsa_DEFINES += \
 $${cifra_DEFINES} \
+$${bn_DEFINES} \
+$${mp_DEFINES} \
+$${mbuint_DEFINES} \
+$${numera_DEFINES} \
 
 ########################################################################
 # rsa OBJECTIVE_HEADERS
@@ -53,8 +61,6 @@ $${cifra_DEFINES} \
 # rsa HEADERS
 #
 rsa_HEADERS += \
-$${CIFRA_SRC}/cifra/base/base.hpp \
-\
 $${CIFRA_SRC}/cifra/crypto/rsa/key.hpp \
 $${CIFRA_SRC}/cifra/crypto/rsa/public_key.hpp \
 $${CIFRA_SRC}/cifra/crypto/rsa/private_key.hpp \
@@ -67,13 +73,8 @@ $${CIFRA_SRC}/cifra/crypto/rsa/mp/key.hpp \
 $${CIFRA_SRC}/cifra/crypto/rsa/mp/public_key.hpp \
 $${CIFRA_SRC}/cifra/crypto/rsa/mp/private_key.hpp \
 \
-$${CIFRA_SRC}/cifra/crypto/rsa/mb/key.hpp \
-$${CIFRA_SRC}/cifra/crypto/rsa/mb/public_key.hpp \
-$${CIFRA_SRC}/cifra/crypto/rsa/mb/private_key.hpp \
-\
-$${CIFRA_SRC}/cifra/console/main.hpp \
+$${CIFRA_SRC}/cifra/console/main_main.hpp \
 $${CIFRA_SRC}/cifra/console/mp/main_opt.hpp \
-$${CIFRA_SRC}/cifra/console/mp/main.hpp \
 \
 $${CIFRA_SRC}/cifra/app/console/rsa/public.hpp \
 $${CIFRA_SRC}/cifra/app/console/rsa/private.hpp \
@@ -82,11 +83,9 @@ $${CIFRA_SRC}/cifra/app/console/rsa/main.hpp \
 # rsa SOURCES
 #
 rsa_SOURCES += \
-$${CIFRA_SRC}/cifra/base/base.cpp \
-\
-$${CIFRA_SRC}/cifra/crypto/rsa/mb/key.cpp \
-$${CIFRA_SRC}/cifra/crypto/rsa/mb/public_key.cpp \
-$${CIFRA_SRC}/cifra/crypto/rsa/mb/private_key.cpp \
+$${CIFRA_SRC}/cifra/crypto/rsa/bn/key.cpp \
+$${CIFRA_SRC}/cifra/crypto/rsa/bn/public_key.cpp \
+$${CIFRA_SRC}/cifra/crypto/rsa/bn/private_key.cpp \
 \
 $${CIFRA_SRC}/cifra/console/main_main.cpp \
 $${CIFRA_SRC}/cifra/console/mp/main_opt.cpp \
@@ -105,3 +104,8 @@ $${cifra_FRAMEWORKS} \
 #
 rsa_LIBS += \
 $${cifra_LIBS} \
+$${mbuint_LIBS} \
+$${bn_LIBS} \
+$${mp_LIBS} \
+
+

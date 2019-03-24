@@ -13,67 +13,62 @@
 # or otherwise) arising in any way out of the use of this software,
 # even if advised of the possibility of such damage.
 #
-#   File: cifra.pri
+#   File: hash.pri
 #
 # Author: $author$
-#   Date: 3/12/2019
+#   Date: 3/14/2019
 #
-# QtCreator .pri file for cifra executable cifra
+# QtCreator .pri file for cifra executable hash
 ########################################################################
 
 ########################################################################
-# cifra
+# hash
 
-# cifra_exe TARGET
+# hash TARGET
 #
-cifra_exe_TARGET = cifra
+hash_TARGET = hash
 
-# cifra_exe INCLUDEPATH
+# hash INCLUDEPATH
 #
-cifra_exe_INCLUDEPATH += \
+hash_INCLUDEPATH += \
 $${cifra_INCLUDEPATH} \
 
-# cifra_exe DEFINES
+# hash DEFINES
 #
-cifra_exe_DEFINES += \
+hash_DEFINES += \
 $${cifra_DEFINES} \
 
 ########################################################################
-# cifra_exe OBJECTIVE_HEADERS
+# hash OBJECTIVE_HEADERS
 #
-#cifra_exe_OBJECTIVE_HEADERS += \
+#hash_OBJECTIVE_HEADERS += \
 #$${CIFRA_SRC}/cifra/base/Base.hh \
 
-# cifra_exe OBJECTIVE_SOURCES
+# hash OBJECTIVE_SOURCES
 #
-#cifra_exe_OBJECTIVE_SOURCES += \
+#hash_OBJECTIVE_SOURCES += \
 #$${CIFRA_SRC}/cifra/base/Base.mm \
 
 ########################################################################
-# cifra_exe HEADERS
+# hash HEADERS
 #
-cifra_exe_HEADERS += \
-$${CIFRA_SRC}/cifra/console/main.hpp \
-$${CIFRA_SRC}/cifra/console/lib/cifra/version/main.hpp \
-$${CIFRA_SRC}/cifra/app/console/cifra/main_opt.hpp \
-$${CIFRA_SRC}/cifra/app/console/cifra/main.hpp \
+hash_HEADERS += \
+$${CIFRA_SRC}/cifra/app/console/hash/main.hpp \
 
-# cifra_exe SOURCES
+# hash SOURCES
 #
-cifra_exe_SOURCES += \
-$${CIFRA_SRC}/cifra/console/main_main.cpp \
-$${CIFRA_SRC}/cifra/app/console/cifra/main_opt.cpp \
-$${CIFRA_SRC}/cifra/app/console/cifra/main.cpp \
+hash_SOURCES += \
+$${CIFRA_SRC}/cifra/app/console/hash/main.cpp \
 
 ########################################################################
-# cifra_exe FRAMEWORKS
+# hash FRAMEWORKS
 #
-cifra_exe_FRAMEWORKS += \
+hash_FRAMEWORKS += \
 $${cifra_FRAMEWORKS} \
 
-# cifra_exe LIBS
+# hash LIBS
 #
-cifra_exe_LIBS += \
+hash_LIBS += \
 $${cifra_LIBS} \
 
 

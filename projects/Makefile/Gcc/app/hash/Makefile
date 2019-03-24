@@ -13,67 +13,92 @@
 # or otherwise) arising in any way out of the use of this software,
 # even if advised of the possibility of such damage.
 #
-#   File: cifra.pri
+#   File: Makefile
 #
 # Author: $author$
-#   Date: 3/12/2019
+#   Date: 3/16/2019
 #
-# QtCreator .pri file for cifra executable cifra
+# generic Gcc Makefile for cifra Executable hash
 ########################################################################
 
-########################################################################
-# cifra
 
-# cifra_exe TARGET
 #
-cifra_exe_TARGET = cifra
-
-# cifra_exe INCLUDEPATH
+# target
 #
-cifra_exe_INCLUDEPATH += \
-$${cifra_INCLUDEPATH} \
-
-# cifra_exe DEFINES
-#
-cifra_exe_DEFINES += \
-$${cifra_DEFINES} \
+hash_EXETARGET = hash
 
 ########################################################################
-# cifra_exe OBJECTIVE_HEADERS
-#
-#cifra_exe_OBJECTIVE_HEADERS += \
-#$${CIFRA_SRC}/cifra/base/Base.hh \
 
-# cifra_exe OBJECTIVE_SOURCES
 #
-#cifra_exe_OBJECTIVE_SOURCES += \
-#$${CIFRA_SRC}/cifra/base/Base.mm \
+# user c++ flags
+#
+hash_USRCXXFLAGS += \
+${cifra_USRCXXFLAGS} \
+
+#
+# user defines
+#
+hash_USRDEFINES += \
+${cifra_USRDEFINES} \
+
+#
+# user includes
+#
+hash_USRINCLUDES += \
+${cifra_USRINCLUDES} \
+
+#
+# user libdirs
+#
+hash_USRLIBDIRS += \
+${cifra_USRLIBDIRS} \
 
 ########################################################################
-# cifra_exe HEADERS
-#
-cifra_exe_HEADERS += \
-$${CIFRA_SRC}/cifra/console/main.hpp \
-$${CIFRA_SRC}/cifra/console/lib/cifra/version/main.hpp \
-$${CIFRA_SRC}/cifra/app/console/cifra/main_opt.hpp \
-$${CIFRA_SRC}/cifra/app/console/cifra/main.hpp \
 
-# cifra_exe SOURCES
 #
-cifra_exe_SOURCES += \
-$${CIFRA_SRC}/cifra/console/main_main.cpp \
-$${CIFRA_SRC}/cifra/app/console/cifra/main_opt.cpp \
-$${CIFRA_SRC}/cifra/app/console/cifra/main.cpp \
+# Executable .c sources
+#
+#hash_EXE_C_SOURCES += \
+#${CIFRA_SRC}/cifra/base/Base.c \
+
+#
+# Executable .cc sources
+#
+#hash_EXE_CC_SOURCES += \
+#${CIFRA_SRC}/cifra/base/Base.cc \
+
+#
+# Executable .cxx sources
+#
+#hash_EXE_CXX_SOURCES += \
+#${CIFRA_SRC}/cifra/base/Base.cxx \
+
+#
+# Executable .cpp sources
+#
+hash_EXE_CPP_SOURCES += \
+${CIFRA_SRC}/cifra/app/console/hash/main.cpp \
+
+#
+# Executable .m sources
+#
+#hash_EXE_M_SOURCES += \
+#${CIFRA_SRC}/cifra/base/Base.m \
+
+#
+# Executable .mm sources
+#
+#hash_EXE_MM_SOURCES += \
+#${CIFRA_SRC}/cifra/base/Base.mm \
+
 
 ########################################################################
-# cifra_exe FRAMEWORKS
-#
-cifra_exe_FRAMEWORKS += \
-$${cifra_FRAMEWORKS} \
 
-# cifra_exe LIBS
 #
-cifra_exe_LIBS += \
-$${cifra_LIBS} \
+# Executable libraries
+#
+hash_LIBS += \
+${cifra_LIBS}
+
 
 
