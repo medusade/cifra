@@ -16,7 +16,7 @@
 #   File: cifra.pri
 #
 # Author: $author$
-#   Date: 3/12/2019
+#   Date: 3/12/2019, 12/26/2020
 #
 # QtCreator .pri file for cifra executable cifra
 ########################################################################
@@ -37,6 +37,7 @@ $${cifra_INCLUDEPATH} \
 #
 cifra_exe_DEFINES += \
 $${cifra_DEFINES} \
+XOS_DEFAULT_LOG_ERROR \
 
 ########################################################################
 # cifra_exe OBJECTIVE_HEADERS
